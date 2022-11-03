@@ -29,7 +29,7 @@ int main()
             break;
         case 2:
             cout << "Enter 1 to search partially\n";
-            cout << "Enter 2 to search partially\n";
+            cout << "Enter 2 to search completely\n";
             int searchChoice;
             cin >> searchChoice;
             if (searchChoice == 1)
