@@ -4,15 +4,20 @@ using namespace std;
 
 int main()
 {
-	Trie fnameTrie, lnameTrie, phoneTrie;
+	// Trie fnameTrie, lnameTrie, phoneTrie;
+	struct TrieNode *fnameTrie = getNode();
+	struct TrieNode *lnameTrie = getNode();
+	struct TrieNode *phoneTrie = getNode();
 	while (true)
 	{
-		cout << "------------- Phonebook Application -------------\n";
-		cout << "Enter 1 to add\n";
-		cout << "Enter 2 to search\n";
+		cout << "\n------------- Phonebook Application ------------\n\n";
+		cout << "Enter 1 to add contact\n";
+		cout << "Enter 2 to search contact\n";
+		cout << "Enter any other number to exit\n";
 		cout << "Enter choice:\n";
-		int choice, searchFilter;
+		int choice, searchChoice;
 		cin >> choice;
+		bool phoneFlag = true;
 		string fname, lname, phone;
 		string query;
 
@@ -23,84 +28,92 @@ int main()
 			cin >> fname;
 			cout << "Enter Last Name:\n";
 			cin >> lname;
-			cout << "Enter Phone Number:\n";
-			cin >> phone;
-			addEntry(fname, fnameTrie);
-			addEntry(lname, lnameTrie);
-			addEntry(phone, phoneTrie);
+			while (true)
+			{
+				cout << "Enter Phone Number:\n";
+				cin >> phone;
+				phoneFlag = true;
+				if (phone.size() == 10)
+				{
+					for (auto &s : phone)
+					{
+						if (s - '0' > 9 or s - '0' < 0)
+						{
+							phoneFlag = false;
+							break;
+						}
+					}
+				}
+				else
+				{
+					phoneFlag = false;
+				}
+				if (!phoneFlag)
+					cout << "You have entered invalid phone number. Please try again.\n";
+				else
+				{
+					break;
+				}
+			}
+
+			insert(fnameTrie, fname);
+			insert(lnameTrie, lname);
+			insert(phoneTrie, phone);
+
 			break;
 		case 2:
+			int searchFilter;
 			while (true)
 			{
 				cout << "Enter 1 to search by First Name\n";
 				cout << "Enter 2 to search by Last Name\n";
 				cout << "Enter 3 to search by Phone Number\n";
 				cin >> searchFilter;
-				switch (searchFilter)
+				bool searchFlag = true;
+
+				if (searchFilter > 3)
 				{
-				case 1:
-					cout << "Enter 1 to search partially by First Name\n";
-					cout << "Enter 2 to search completely by First Name\n";
-					int searchChoice;
-					cin >> searchChoice;
-					if (searchChoice == 1)
-					{
-						cout << "Enter query to search partially:\n";
-						cin >> query;
-						searchPartially(query, fnameTrie);
-					}
-					else if (searchChoice == 2)
-					{
-						cout << "Enter query to search completely:\n";
-						cin >> query;
-						cout << boolalpha << searchCompletely(query, fnameTrie);
-					}
-					break;
-				case 2:
-					cout << "Enter 1 to search partially by Last Name\n";
-					cout << "Enter 2 to search completely by Last Name\n";
-					int searchChoice;
-					cin >> searchChoice;
-					if (searchChoice == 1)
-					{
-						cout << "Enter query to search partially:\n";
-						cin >> query;
-						searchPartially(query, lnameTrie);
-					}
-					else if (searchChoice == 2)
-					{
-						cout << "Enter query to search completely:\n";
-						cin >> query;
-						cout << boolalpha << searchCompletely(query, lnameTrie);
-					}
-					break;
-				case 3:
-					cout << "Enter 1 to search partially by Phone Number\n";
-					cout << "Enter 2 to search completely by Phone Number\n";
-					int searchChoice;
-					cin >> searchChoice;
-					if (searchChoice == 1)
-					{
-						cout << "Enter the ";
-						cout << "Enter query to search partially:\n";
-						cin >> query;
-						searchPartially(query, phoneTrie);
-					}
-					else if (searchChoice == 2)
-					{
-						cout << "Enter query to search completely:\n";
-						cin >> query;
-						cout << boolalpha << searchCompletely(query, phoneTrie);
-					}
+					searchFlag = false;
+				}
+				if (!searchFlag)
+					cout << "You have entered invalid choice. Please try again.\n";
+				else
+				{
 					break;
 				}
 			}
-			break;
 
+			TrieNode *TrieHeader;
+			if (searchFilter == 1)
+				TrieHeader = fnameTrie;
+			else if (searchFilter == 2)
+				TrieHeader = lnameTrie;
+			else if (searchFilter == 3)
+				TrieHeader = phoneTrie;
+			else
+				cout << "Wrong Option Selected.\n";
+
+			cout << "Enter 1 to search Partially\n";
+			cout << "Enter 2 to search Completely\n";
+			cin >> searchChoice;
+			if (searchChoice == 1)
+			{
+				cout << "Enter query to search partially:\n";
+				cin >> query;
+				cout << "OUTPUT\n";
+				searchPartially(TrieHeader, query);
+			}
+			else if (searchChoice == 2)
+			{
+				// STILL TO BE DONE
+			}
+			else
+				cout << "Invalid Choice. PLEASE TRY AGAIN!\n";
+			break;
 		default:
-			cout << "Choice other than A, B and C";
+			cout << "Thank you for using PhoneBook Application.\n -> by Blackmar-Diemer Gambit\n";
+			return 0;
 			break;
 		}
 	}
-	return 0;
 }

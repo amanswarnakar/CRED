@@ -1,23 +1,21 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define ALPHABET_SIZE (26)
-
 struct TrieNode
 {
-	struct TrieNode *children[ALPHABET_SIZE];
+	struct TrieNode *children[26];
 	bool isWordEnd;
 };
 
 struct TrieNode *getNode()
 {
-	struct TrieNode *pNode = new TrieNode;
-	pNode->isWordEnd = false;
+	struct TrieNode *parent = new TrieNode;
+	parent->isWordEnd = false;
 
-	for (int i = 0; i < ALPHABET_SIZE; i++)
-		pNode->children[i] = NULL;
+	for (int i = 0; i < 26; i++)
+		parent->children[i] = NULL;
 
-	return pNode;
+	return parent;
 }
 
 void insert(struct TrieNode *root, const string key)
@@ -38,7 +36,7 @@ void insert(struct TrieNode *root, const string key)
 
 bool isLastNode(struct TrieNode *root)
 {
-	for (int i = 0; i < ALPHABET_SIZE; i++)
+	for (int i = 0; i < 26; i++)
 		if (root->children[i])
 			return 0;
 	return 1;
@@ -49,7 +47,7 @@ void suggestionsRec(struct TrieNode *root, string currPrefix)
 	if (root->isWordEnd)
 		cout << currPrefix << endl;
 
-	for (int i = 0; i < ALPHABET_SIZE; i++)
+	for (int i = 0; i < 26; i++)
 		if (root->children[i])
 		{
 			char child = 'a' + i;
@@ -57,7 +55,7 @@ void suggestionsRec(struct TrieNode *root, string currPrefix)
 		}
 }
 
-int printAutoSuggestions(TrieNode *root, const string query)
+int searchPartially(TrieNode *root, const string query)
 {
 	struct TrieNode *iterator = root;
 	for (char c : query)
