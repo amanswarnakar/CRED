@@ -25,6 +25,19 @@ int main()
             cin >> lname;
             cout << "Enter phone:\n";
             cin >> phone;
+            for (int i = 0; i < phone.size(); i++)
+            {
+                if (i == 10)
+                {
+                    cout << "Incorrect Input Exitin\n";
+                    break;
+                }
+                if (phone[i] - 48 > 10)
+                {
+                    cout << "Incorrect Input Exitin\n";
+                    break;
+                }
+            }
             addEntry(fname, fnameTrie);
             addEntry(lname, lnameTrie);
             addEntry(phone, phoneTrie);
