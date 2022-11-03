@@ -1,104 +1,79 @@
 #include <bits/stdc++.h>
-#pragma once
 using namespace std;
 
-class TrieNode
-{
-public:
-	char data;
-	TrieNode *child[26];
-	bool isEnd;
+#define ALPHABET_SIZE (26)
 
-	TrieNode(char ch)
-	{
-		data = ch;
-		for (int i = 0; i < 26; i++)
-		{
-			child[i] = NULL;
-		}
-		isEnd = false;
-	}
+struct TrieNode
+{
+	struct TrieNode *children[ALPHABET_SIZE];
+	bool isWordEnd;
 };
 
-class Trie
+struct TrieNode *getNode()
 {
+	struct TrieNode *pNode = new TrieNode;
+	pNode->isWordEnd = false;
 
-public:
-	TrieNode *root;
+	for (int i = 0; i < ALPHABET_SIZE; i++)
+		pNode->children[i] = NULL;
 
-	Trie()
-	{
-		root = new TrieNode('\0');
-	}
-
-	void insertUtility(TrieNode *root, string word)
-	{
-		if (word.length() == 0)
-		{
-			root->isEnd = true;
-			return;
-		}
-
-		int index = word[0] - 'a';
-		TrieNode *child;
-
-		if (root->child[index] != NULL)
-		{
-			child = root->child[index];
-		}
-		else
-		{
-			child = new TrieNode(word[0]);
-			root->child[index] = child;
-		}
-
-		insertUtility(child, word.substr(1));
-	}
-
-	void insert(string word)
-	{
-		insertUtility(root, word);
-	}
-
-	bool completeSearchUtility(TrieNode *root, string word)
-	{
-		if (word.length() == 0)
-		{
-			return root->isEnd;
-		}
-
-		int index = word[0] - 'a';
-		TrieNode *child;
-
-		if (root->child[index] != NULL)
-		{
-			child = root->child[index];
-		}
-		else
-		{
-			return false;
-		}
-
-		return completeSearchUtility(child, word.substr(1));
-	}
-
-	bool completeSearch(string word)
-	{
-		return completeSearchUtility(root, word);
-	}
-};
-
-void addEntry(string insertVal, Trie obj)
-{
-	obj.insert(insertVal);
+	return pNode;
 }
 
-void searchPartially(string , Trie obj)
+void insert(struct TrieNode *root, const string key)
 {
-	cout << "Search Partially" << endl;
+	struct TrieNode *iterator = root;
+
+	for (int level = 0; level < key.length(); level++)
+	{
+		int index = key[level] - 'a';
+		if (!iterator->children[index])
+			iterator->children[index] = getNode();
+
+		iterator = iterator->children[index];
+	}
+
+	iterator->isWordEnd = true;
 }
 
-bool searchCompletely(string query, Trie obj)
+bool isLastNode(struct TrieNode *root)
 {
-	return obj.completeSearch(query);
+	for (int i = 0; i < ALPHABET_SIZE; i++)
+		if (root->children[i])
+			return 0;
+	return 1;
+}
+
+void suggestionsRec(struct TrieNode *root, string currPrefix)
+{
+	if (root->isWordEnd)
+		cout << currPrefix << endl;
+
+	for (int i = 0; i < ALPHABET_SIZE; i++)
+		if (root->children[i])
+		{
+			char child = 'a' + i;
+			suggestionsRec(root->children[i], currPrefix + child);
+		}
+}
+
+int printAutoSuggestions(TrieNode *root, const string query)
+{
+	struct TrieNode *iterator = root;
+	for (char c : query)
+	{
+		int ind = c - 'a';
+		if (!iterator->children[ind])
+			return 0;
+
+		iterator = iterator->children[ind];
+	}
+
+	if (isLastNode(iterator))
+	{
+		cout << query << endl;
+		return -1;
+	}
+	suggestionsRec(iterator, query);
+	return 1;
 }
