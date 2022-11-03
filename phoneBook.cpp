@@ -80,7 +80,7 @@ public:
             return false;
         }
 
-        return searchUtility(child, word.substr(1));
+        return completeSearchUtility(child, word.substr(1));
     }
 
     bool completeSearch(string word)
