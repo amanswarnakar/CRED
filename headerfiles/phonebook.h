@@ -88,9 +88,9 @@ public:
     }
 };
 
-void addEntry(string fname, string lname, string phone, Trie obj)
+void addEntry(string insertVal, Trie obj)
 {
-    obj.insert(fname);
+    obj.insert(insertVal);
 }
 
 void searchPartially(string query)

@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-    Trie obj;
+    Trie fnameTrie, lnameTrie, phoneTrie;
     while (true)
     {
         cout << "------------- Phonebook Application -------------\n";
@@ -25,7 +25,9 @@ int main()
             cin >> lname;
             cout << "Enter phone:\n";
             cin >> phone;
-            addEntry(fname, lname, phone, obj);
+            addEntry(fname, fnameTrie);
+            addEntry(lname, lnameTrie);
+            addEntry(phone, phoneTrie);
             break;
         case 2:
             cout << "Enter 1 to search partially\n";
