@@ -93,7 +93,7 @@ void addEntry(string insertVal, Trie obj)
 	obj.insert(insertVal);
 }
 
-void searchPartially(string , Trie obj)
+bool searchPartially(string query, Trie obj)
 {
 	cout << "Search Partially" << endl;
 }
