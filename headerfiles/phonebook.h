@@ -5,105 +5,100 @@ using namespace std;
 class TrieNode
 {
 public:
-  char data;
-  TrieNode *child[26];
-  bool isEnd;
+    char data;
+    TrieNode *child[26];
+    bool isEnd;
 
-  TrieNode(char ch)
-  {
-    data = ch;
-    for (int i = 0; i < 26; i++)
+    TrieNode(char ch)
     {
-      child[i] = NULL;
+        data = ch;
+        for (int i = 0; i < 26; i++)
+        {
+            child[i] = NULL;
+        }
+        isEnd = false;
     }
-    isEnd = false;
-  }
 };
 
 class Trie
 {
 
 public:
-  TrieNode *root;
+    TrieNode *root;
 
-  Trie()
-  {
-    root = new TrieNode('\0');
-  }
-
-  void insertUtility(TrieNode *root, string word)
-  {
-    if (word.length() == 0)
+    Trie()
     {
-      root->isEnd = true;
-      return;
+        root = new TrieNode('\0');
     }
 
-    int index = word[0] - 'a';
-    TrieNode *child;
-
-    if (root->child[index] != NULL)
+    void insertUtility(TrieNode *root, string word)
     {
-      child = root->child[index];
-    }
-    else
-    {
-      child = new TrieNode(word[0]);
-      root->child[index] = child;
-    }
+        if (word.length() == 0)
+        {
+            root->isEnd = true;
+            return;
+        }
 
-    insertUtility(child, word.substr(1));
-  }
+        int index = word[0] - 'a';
+        TrieNode *child;
 
-  void insert(string word)
-  {
-    insertUtility(root, word);
-  }
+        if (root->child[index] != NULL)
+        {
+            child = root->child[index];
+        }
+        else
+        {
+            child = new TrieNode(word[0]);
+            root->child[index] = child;
+        }
 
-  bool completeSearchUtility(TrieNode *root, string word)
-  {
-    if (word.length() == 0)
-    {
-      return root->isEnd;
+        insertUtility(child, word.substr(1));
     }
 
-    int index = word[0] - 'a';
-    TrieNode *child;
-
-    if (root->child[index] != NULL)
+    void insert(string word)
     {
-      child = root->child[index];
-    }
-    else
-    {
-      return false;
+        insertUtility(root, word);
     }
 
-    return completeSearchUtility(child, word.substr(1));
-  }
+    bool completeSearchUtility(TrieNode *root, string word)
+    {
+        if (word.length() == 0)
+        {
+            return root->isEnd;
+        }
 
-  bool completeSearch(string word)
-  {
-    return completeSearchUtility(root, word);
-  }
+        int index = word[0] - 'a';
+        TrieNode *child;
+
+        if (root->child[index] != NULL)
+        {
+            child = root->child[index];
+        }
+        else
+        {
+            return false;
+        }
+
+        return completeSearchUtility(child, word.substr(1));
+    }
+
+    bool completeSearch(string word)
+    {
+        return completeSearchUtility(root, word);
+    }
 };
 
-const char *func(char x)
+void addEntry(string fname, string lname, string phone, Trie obj)
 {
-  return "abc";
-}
-
-void addEntry(string fname, string lname, string phone)
-{
-  cout << fname << " " << lname << " " << phone << endl;
+    obj.insert(fname);
 }
 
 void searchPartially(string query)
 {
-  cout << "Search Partially" << endl;
+    cout << "Search Partially" << endl;
 }
 
-void searchCompletely(string query)
+bool searchCompletely(string query, Trie obj)
 {
-  cout << "Search Completely" << endl;
+    return obj.completeSearch(query);
 }
