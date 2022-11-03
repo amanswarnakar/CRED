@@ -7,7 +7,7 @@ struct TrieNode
 	bool isWordEnd;
 };
 
-struct TrieNode *getNode()
+struct TrieNode *constructor()
 {
 	struct TrieNode *parent = new TrieNode;
 	parent->isWordEnd = false;
@@ -18,7 +18,7 @@ struct TrieNode *getNode()
 	return parent;
 }
 
-void insert(struct TrieNode *root, const string key)
+void insert(struct TrieNode *root, string key)
 {
 	struct TrieNode *iterator = root;
 
@@ -26,7 +26,7 @@ void insert(struct TrieNode *root, const string key)
 	{
 		int index = key[level] - 'a';
 		if (!iterator->children[index])
-			iterator->children[index] = getNode();
+			iterator->children[index] = constructor();
 
 		iterator = iterator->children[index];
 	}
@@ -34,15 +34,7 @@ void insert(struct TrieNode *root, const string key)
 	iterator->isWordEnd = true;
 }
 
-bool isLastNode(struct TrieNode *root)
-{
-	for (int i = 0; i < 26; i++)
-		if (root->children[i])
-			return 0;
-	return 1;
-}
-
-void suggestionsRec(struct TrieNode *root, string currPrefix)
+void dfs(struct TrieNode *root, string currPrefix)
 {
 	if (root->isWordEnd)
 		cout << currPrefix << endl;
@@ -51,14 +43,14 @@ void suggestionsRec(struct TrieNode *root, string currPrefix)
 		if (root->children[i])
 		{
 			char child = 'a' + i;
-			suggestionsRec(root->children[i], currPrefix + child);
+			dfs(root->children[i], currPrefix + child);
 		}
 }
 
-int searchPartially(TrieNode *root, const string query)
+int searchPartially(TrieNode *root, string query)
 {
 	struct TrieNode *iterator = root;
-	for (char c : query)
+	for (char &c : query)
 	{
 		int ind = c - 'a';
 		if (!iterator->children[ind])
@@ -67,11 +59,7 @@ int searchPartially(TrieNode *root, const string query)
 		iterator = iterator->children[ind];
 	}
 
-	if (isLastNode(iterator))
-	{
-		cout << query << endl;
-		return -1;
-	}
-	suggestionsRec(iterator, query);
+	// complete matching wala start from here
+	dfs(iterator, query);
 	return 1;
 }

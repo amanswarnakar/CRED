@@ -5,9 +5,9 @@ using namespace std;
 int main()
 {
 	// Trie fnameTrie, lnameTrie, phoneTrie;
-	struct TrieNode *fnameTrie = getNode();
-	struct TrieNode *lnameTrie = getNode();
-	struct TrieNode *phoneTrie = getNode();
+	struct TrieNode *fnameTrie = constructor();
+	struct TrieNode *lnameTrie = constructor();
+	struct TrieNode *phoneTrie = constructor();
 	while (true)
 	{
 		cout << "\n------------- Phonebook Application ------------\n\n";
@@ -67,7 +67,7 @@ int main()
 			{
 				cout << "Enter 1 to search by First Name\n";
 				cout << "Enter 2 to search by Last Name\n";
-				cout << "Enter 3 to search by Phone Number\n";
+				cout << "Enter 3 to search by Phone Number(10 Digits)\n";
 				cin >> searchFilter;
 				bool searchFlag = true;
 
@@ -101,14 +101,21 @@ int main()
 				cout << "Enter query to search partially:\n";
 				cin >> query;
 				cout << "OUTPUT\n";
-				searchPartially(TrieHeader, query);
+				int result = searchPartially(TrieHeader, query);
+				if (!result)
+				{
+					cout << "No Matching Result Found.\n";
+				}
 			}
 			else if (searchChoice == 2)
 			{
 				// STILL TO BE DONE
 			}
 			else
+			{
 				cout << "Invalid Choice. PLEASE TRY AGAIN!\n";
+				break;
+			}
 			break;
 		default:
 			cout << "Thank you for using PhoneBook Application.\n -> by Blackmar-Diemer Gambit\n";
