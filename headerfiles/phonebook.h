@@ -24,13 +24,17 @@ int welcomeMenu()
 	cout << "Enter 1 to add contact\n";
 	cout << "Enter 2 to search contact\n";
 	cout << "Enter any other number to exit\n";
-	cout << "Enter choice:\n";
 	int choice;
-	cin >> choice;
+	if (!(cin >> choice) or choice > 2)
+	{
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		choice = 0;
+	}
 	return choice;
 }
 
-unordered_map<int, vector<string>> database;
+vector<vector<string>> database(23700);
 
 struct TrieNode *fnameTrie = constructor();
 struct TrieNode *lnameTrie = constructor();
@@ -42,6 +46,8 @@ void insertInTrie(struct TrieNode *root, string key, int SerialNo)
 	for (int level = 0; level < key.length(); level++)
 	{
 		int index = key[level] - 'a';
+		if (isdigit(key[level]))
+			index = key[level] - '0';
 		if (!iterator->children[index])
 			iterator->children[index] = constructor();
 
@@ -53,45 +59,64 @@ void insertInTrie(struct TrieNode *root, string key, int SerialNo)
 
 bool isPhoneNumber(string &phone)
 {
-	if (phone.size() > 15 or phone.size() < 7)
-		return false;
 	for (char &digit : phone)
 		if (!isdigit(digit))
 			return false;
 
 	return true;
 }
-
-void insertInPhoneBookFromCSV(string fName, string lName, string phone)
+void readFromCSV()
 {
-	SerialNo++;
-	database.insert({SerialNo, {fName, lName, phone}});
-	insertInTrie(fnameTrie, fName, SerialNo);
-	insertInTrie(lnameTrie, lName, SerialNo);
-	insertInTrie(phoneTrie, phone, SerialNo);
+	string line, word;
+	fstream file("gg.csv", ios::in);
+	if (file.is_open())
+	{
+		cout << "Reading data from CSV File." << endl;
+		while (getline(file, line))
+		{
+			vector<string> row;
+			stringstream s(line);
+
+			while (getline(s, word, ','))
+			{
+				row.push_back(word);
+			}
+			SerialNo++;
+			database[SerialNo] = {row[0], row[1], row[2]};
+			transform(row[0].begin(), row[0].end(), row[0].begin(), ::tolower);
+			transform(row[1].begin(), row[1].end(), row[1].begin(), ::tolower);
+
+			insertInTrie(fnameTrie, row[0], SerialNo);
+			insertInTrie(lnameTrie, row[1], SerialNo);
+			insertInTrie(phoneTrie, row[2], SerialNo);
+		}
+	}
+	else
+		cout << "Could not open the file\n";
 }
 
 void insertInPhoneBook()
 {
 	string fname, lname, phone;
-	bool phoneFlag = true;
-
 	cout << "Enter First Name:\n";
 	cin >> fname;
 	cout << "Enter Last Name:\n";
 	cin >> lname;
 
-	while (phoneFlag)
+	while (true)
 	{
 		cout << "Enter Phone Number:\n";
 		cin >> phone;
-		phoneFlag = isPhoneNumber(phone);
-		if (!phoneFlag)
+
+		if (!isPhoneNumber(phone))
 			cout << "You have entered invalid phone number. Please try again.\n";
 		else
 		{
 			SerialNo++;
-			database.insert({SerialNo, {fname, lname, phone}});
+			database[SerialNo] = {fname, lname, phone};
+
+			transform(fname.begin(), fname.end(), fname.begin(), ::tolower);
+			transform(lname.begin(), lname.end(), lname.begin(), ::tolower);
 
 			insertInTrie(fnameTrie, fname, SerialNo);
 			insertInTrie(lnameTrie, lname, SerialNo);
@@ -120,6 +145,8 @@ void DFS(struct TrieNode *root, string currPrefix)
 		if (root->children[i])
 		{
 			char child = 'a' + i;
+			if (isdigit(currPrefix.back()))
+				child = '0' + i;
 			DFS(root->children[i], currPrefix + child);
 		}
 }
@@ -130,6 +157,8 @@ void searchCompletely(TrieNode *root, string query)
 	for (char &c : query)
 	{
 		int ind = c - 'a';
+		if (isdigit(c))
+			ind = c - '0';
 		if (!iterator->children[ind])
 		{
 			cout << "No Complete Match for the query.\n";
@@ -152,6 +181,8 @@ int searchPartially(TrieNode *root, string query)
 	for (char &c : query)
 	{
 		int ind = c - 'a';
+		if (isdigit(c))
+			ind = c - '0';
 		if (!iterator->children[ind])
 			return 0;
 
@@ -166,69 +197,58 @@ void searchInPhoneBook()
 	cout << "Enter 1 to search by First Name\n";
 	cout << "Enter 2 to search by Last Name\n";
 	cout << "Enter 3 to search by Phone Number\n";
-	cout << "Enter any other number to go back\n";
-	bool breakFlag = false;
+
 	TrieNode *TrieHeader;
-	while (true)
+	int searchFilter;
+	while (!(cin >> searchFilter and searchFilter < 4))
 	{
-		int searchFilter;
-		cin >> searchFilter;
-		if (searchFilter == 1)
-		{
-			TrieHeader = fnameTrie;
-			break;
-		}
-		else if (searchFilter == 2)
-		{
-			TrieHeader = lnameTrie;
-			break;
-		}
-		else if (searchFilter == 3)
-		{
-			TrieHeader = phoneTrie;
-			break;
-		}
-		else
-		{
-			cout << "Going to Previous Menu\n";
-			breakFlag = true;
-			break;
-		}
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		cout << "Invalid Input. Please re-enter.\n";
 	}
-	if (breakFlag)
-		return;
+	if (searchFilter == 1)
+	{
+		TrieHeader = fnameTrie;
+	}
+	else if (searchFilter == 2)
+	{
+		TrieHeader = lnameTrie;
+	}
+	else
+	{
+		TrieHeader = phoneTrie;
+	}
+
 	cout << "Enter 1 to search Partially\n";
 	cout << "Enter 2 to search Completely\n";
 	int searchChoice;
-	cin >> searchChoice;
-
 	string query;
-	while (true)
+
+	while (!(cin >> searchChoice) or searchChoice > 3)
 	{
-		if (searchChoice == 1)
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		cout << "Invalid Input. Please re-enter.\n";
+	}
+
+	if (searchChoice == 1)
+	{
+		cout << "Enter query to search partially:\n";
+		cin >> query;
+		transform(query.begin(), query.end(), query.begin(), ::tolower);
+		cout << "\t\tOUTPUT\n";
+		int result = searchPartially(TrieHeader, query);
+		if (!result)
 		{
-			cout << "Enter query to search partially:\n";
-			cin >> query;
-			cout << "\t\tOUTPUT\n";
-			int result = searchPartially(TrieHeader, query);
-			if (!result)
-			{
-				cout << "No Matching Result Found.\n";
-			}
-			break;
+			cout << "No Matching Result Found.\n";
 		}
-		else if (searchChoice == 2)
-		{
-			cout << "Enter query to search completely:\n";
-			cin >> query;
-			cout << "\t\tOUTPUT\n";
-			searchCompletely(TrieHeader, query);
-			break;
-		}
-		else
-		{
-			cout << "Invalid Choice. PLEASE TRY AGAIN!\n";
-			break;
-		}
+	}
+	else
+	{
+		cout << "Enter query to search completely:\n";
+		cin >> query;
+		transform(query.begin(), query.end(), query.begin(), ::tolower);
+		cout << "\t\tOUTPUT\n";
+		searchCompletely(TrieHeader, query);
 	}
 }
