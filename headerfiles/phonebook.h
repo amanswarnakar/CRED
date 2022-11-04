@@ -62,6 +62,15 @@ bool isPhoneNumber(string &phone)
 	return true;
 }
 
+void insertInPhoneBookFromCSV(string fName, string lName, string phone)
+{
+	SerialNo++;
+	database.insert({SerialNo, {fName, lName, phone}});
+	insertInTrie(fnameTrie, fName, SerialNo);
+	insertInTrie(lnameTrie, lName, SerialNo);
+	insertInTrie(phoneTrie, phone, SerialNo);
+}
+
 void insertInPhoneBook()
 {
 	string fname, lname, phone;
@@ -157,7 +166,8 @@ void searchInPhoneBook()
 	cout << "Enter 1 to search by First Name\n";
 	cout << "Enter 2 to search by Last Name\n";
 	cout << "Enter 3 to search by Phone Number\n";
-
+	cout << "Enter any other number to go back\n";
+	bool breakFlag = false;
 	TrieNode *TrieHeader;
 	while (true)
 	{
@@ -179,8 +189,14 @@ void searchInPhoneBook()
 			break;
 		}
 		else
-			cout << "Wrong Option Selected. Enter correct option.\n";
+		{
+			cout << "Going to Previous Menu\n";
+			breakFlag = true;
+			break;
+		}
 	}
+	if (breakFlag)
+		return;
 	cout << "Enter 1 to search Partially\n";
 	cout << "Enter 2 to search Completely\n";
 	int searchChoice;
@@ -210,6 +226,9 @@ void searchInPhoneBook()
 			break;
 		}
 		else
+		{
 			cout << "Invalid Choice. PLEASE TRY AGAIN!\n";
+			break;
+		}
 	}
 }
