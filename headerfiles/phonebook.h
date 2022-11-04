@@ -34,7 +34,7 @@ int welcomeMenu()
 	return choice;
 }
 
-unordered_map<int, vector<string>> database;
+vector<vector<string>> database(23700);
 
 struct TrieNode *fnameTrie = constructor();
 struct TrieNode *lnameTrie = constructor();
@@ -69,7 +69,7 @@ bool isPhoneNumber(string &phone)
 void readFromCSV()
 {
 	string line, word;
-	fstream file("test.csv", ios::in);
+	fstream file("gg.csv", ios::in);
 	if (file.is_open())
 	{
 		cout << "Reading data from CSV File." << endl;
@@ -83,7 +83,7 @@ void readFromCSV()
 				row.push_back(word);
 			}
 			SerialNo++;
-			database.insert({SerialNo, {row[0], row[1], row[2]}});
+			database[SerialNo] = {row[0], row[1], row[2]};
 			transform(row[0].begin(), row[0].end(), row[0].begin(), ::tolower);
 			transform(row[1].begin(), row[1].end(), row[1].begin(), ::tolower);
 
@@ -114,7 +114,7 @@ void insertInPhoneBook()
 		else
 		{
 			SerialNo++;
-			database.insert({SerialNo, {fname, lname, phone}});
+			database[SerialNo] = {fname, lname, phone};
 
 			transform(fname.begin(), fname.end(), fname.begin(), ::tolower);
 			transform(lname.begin(), lname.end(), lname.begin(), ::tolower);
