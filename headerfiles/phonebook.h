@@ -218,7 +218,7 @@ void searchInPhoneBook()
 	}
 	else
 	{
-		cout << "Enter query to search completely:\t";
+		cout << "Enter query to search completely:\n";
 		cin >> query;
 		transform(query.begin(), query.end(), query.begin(), ::tolower);
 		cout << "\t\tOUTPUT\n";
