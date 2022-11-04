@@ -39,7 +39,6 @@ struct TrieNode *phoneTrie = constructor();
 void insertInTrie(struct TrieNode *root, string key, int SerialNo)
 {
 	struct TrieNode *iterator = root;
-
 	for (int level = 0; level < key.length(); level++)
 	{
 		int index = key[level] - 'a';
@@ -54,6 +53,8 @@ void insertInTrie(struct TrieNode *root, string key, int SerialNo)
 
 bool isPhoneNumber(string &phone)
 {
+	if (phone.size() > 15 or phone.size() < 7)
+		return false;
 	for (char &digit : phone)
 		if (!isdigit(digit))
 			return false;
@@ -71,7 +72,7 @@ void insertInPhoneBook()
 	cout << "Enter Last Name:\n";
 	cin >> lname;
 
-	while (true)
+	while (phoneFlag)
 	{
 		cout << "Enter Phone Number:\n";
 		cin >> phone;
