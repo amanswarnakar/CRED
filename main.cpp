@@ -4,6 +4,7 @@ using namespace std;
 
 int main()
 {
+	readFromCSV();
 	while (true)
 	{
 		int choice = welcomeMenu();

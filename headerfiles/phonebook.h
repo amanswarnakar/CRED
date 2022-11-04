@@ -66,11 +66,39 @@ bool isPhoneNumber(string &phone)
 
 	return true;
 }
+void readFromCSV()
+{
+	string line, word;
+	fstream file("test.csv", ios::in);
+	if (file.is_open())
+	{
+		cout << "Reading data from CSV File." << endl;
+		while (getline(file, line))
+		{
+			vector<string> row;
+			stringstream s(line);
+
+			while (getline(s, word, ','))
+			{
+				row.push_back(word);
+			}
+			SerialNo++;
+			database.insert({SerialNo, {row[0], row[1], row[2]}});
+			transform(row[0].begin(), row[0].end(), row[0].begin(), ::tolower);
+			transform(row[1].begin(), row[1].end(), row[1].begin(), ::tolower);
+
+			insertInTrie(fnameTrie, row[0], SerialNo);
+			insertInTrie(lnameTrie, row[1], SerialNo);
+			insertInTrie(phoneTrie, row[2], SerialNo);
+		}
+	}
+	else
+		cout << "Could not open the file\n";
+}
 
 void insertInPhoneBook()
 {
 	string fname, lname, phone;
-
 	cout << "Enter First Name:\n";
 	cin >> fname;
 	cout << "Enter Last Name:\n";
