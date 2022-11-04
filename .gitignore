@@ -1,1 +1,5 @@
-main.exe
+./main.exe
+/main.exe
+/.vscode
+./headerfiles/phonebook.exe
+/headerfiles/phonebook.exe
